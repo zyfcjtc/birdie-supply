@@ -16,6 +16,7 @@ Birdie Supply is a mobile-first e-commerce website for selling shuttlecocks to t
 - **No customer accounts:** Guest checkout only
 - **No online payment:** E-transfer or pay on pickup
 - **Product scope:** Shuttlecocks only (feather, nylon categories)
+- **Bilingual:** English and Chinese (Simplified). Language toggle on storefront and admin.
 
 ## Architecture
 
@@ -50,6 +51,7 @@ Customer (mobile browser)
 - `next` + `react` — framework
 - `@supabase/supabase-js` + `@supabase/ssr` — DB/auth/storage
 - `tailwindcss` — styling
+- `next-intl` — internationalization (EN/ZH)
 - No additional UI libraries
 
 ## Database Schema
@@ -171,25 +173,36 @@ None at launch. Admin checks the dashboard for new orders. Email notifications (
 - Admin can restock anytime from the products page
 - Stock is validated server-side when an order is submitted — if stock changed between add-to-cart and checkout, the customer is notified
 
+## Internationalization (i18n)
+
+- **Languages:** English (en), Chinese Simplified (zh)
+- **Approach:** `next-intl` for route-based i18n with Next.js App Router
+- **URL structure:** `/en/...` and `/zh/...` with locale prefix
+- **Default locale:** English, with language toggle in header
+- **What's translated:** All UI text (navigation, buttons, labels, form fields, status messages)
+- **What's NOT translated:** Product names and descriptions are stored once in the DB (admin enters content in whatever language they choose — can include both languages in the description field if desired)
+- **Language preference:** Stored in cookie, persists across sessions
+
 ## Project Structure
 
 ```
 birdie-supply/
 ├── src/
 │   ├── app/
-│   │   ├── page.tsx                 # Home — product grid
-│   │   ├── product/[id]/page.tsx    # Product detail
-│   │   ├── cart/page.tsx            # Cart view
-│   │   ├── checkout/page.tsx        # Checkout form
-│   │   ├── order-confirmation/page.tsx
-│   │   ├── admin/
-│   │   │   ├── page.tsx             # Dashboard
-│   │   │   ├── orders/page.tsx      # Orders list
-│   │   │   ├── orders/[id]/page.tsx # Order detail
-│   │   │   ├── products/page.tsx    # Product list
-│   │   │   ├── products/new/page.tsx
-│   │   │   └── products/[id]/page.tsx
-│   │   ├── layout.tsx
+│   │   ├── [locale]/
+│   │   │   ├── page.tsx                 # Home — product grid
+│   │   │   ├── product/[id]/page.tsx    # Product detail
+│   │   │   ├── cart/page.tsx            # Cart view
+│   │   │   ├── checkout/page.tsx        # Checkout form
+│   │   │   ├── order-confirmation/page.tsx
+│   │   │   ├── admin/
+│   │   │   │   ├── page.tsx             # Dashboard
+│   │   │   │   ├── orders/page.tsx      # Orders list
+│   │   │   │   ├── orders/[id]/page.tsx # Order detail
+│   │   │   │   ├── products/page.tsx    # Product list
+│   │   │   │   ├── products/new/page.tsx
+│   │   │   │   └── products/[id]/page.tsx
+│   │   │   └── layout.tsx
 │   │   └── globals.css
 │   ├── components/                  # Shared UI components
 │   ├── lib/
@@ -199,7 +212,13 @@ birdie-supply/
 │   │   │   └── middleware.ts        # Auth middleware for /admin
 │   │   ├── types.ts                 # DB types
 │   │   └── cart.ts                  # localStorage cart logic
-│   └── middleware.ts                # Next.js middleware (admin auth check)
+│   ├── i18n/
+│   │   ├── request.ts               # next-intl server config
+│   │   └── routing.ts               # Locale routing config
+│   ├── messages/
+│   │   ├── en.json                  # English translations
+│   │   └── zh.json                  # Chinese translations
+│   └── middleware.ts                # Next.js middleware (locale + admin auth)
 ├── supabase/
 │   └── migrations/                  # SQL migration files
 ├── public/
