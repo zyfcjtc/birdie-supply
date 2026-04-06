@@ -93,7 +93,7 @@ export default function CheckoutPage() {
       }
 
       clear();
-      router.push(`/order-confirmation?id=${data.orderId}`);
+      router.push(`/order-confirmation?id=${data.orderId}&total=${total.toFixed(2)}`);
     } catch {
       setError("Network error. Please try again.");
       setSubmitting(false);
