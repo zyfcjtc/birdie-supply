@@ -45,6 +45,11 @@
     "placeOrder": "提交订单",
     "total": "合计"
   },
+  "contact": {
+    "title": "联系我们",
+    "scanWechat": "扫码添加微信",
+    "arrangeTime": "请通过微信联系我们，安排取货或配送时间。"
+  },
   "confirmation": {
     "title": "订单已提交！",
     "orderNumber": "订单号",

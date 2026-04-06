@@ -211,6 +211,9 @@ export default function CheckoutPage() {
               className="w-full mt-2 px-3 py-2.5 border border-gray-300 rounded-lg text-sm"
             />
           )}
+          <p className="text-xs text-gray-500 mt-2">
+            📱 {t("contact.arrangeTime")}
+          </p>
         </div>
 
         {/* Notes */}

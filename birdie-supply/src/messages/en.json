@@ -45,6 +45,11 @@
     "placeOrder": "Place Order",
     "total": "Total"
   },
+  "contact": {
+    "title": "Contact Us",
+    "scanWechat": "Scan to add us on WeChat",
+    "arrangeTime": "Please contact us via WeChat to arrange your pickup or delivery time."
+  },
   "confirmation": {
     "title": "Order Placed!",
     "orderNumber": "Order Number",
