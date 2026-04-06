@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
+import { sendOrderNotification } from "@/lib/email";
 
 type OrderItemInput = {
   productId: string;
@@ -122,6 +123,22 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
+
+  // Send email notification (fire-and-forget)
+  sendOrderNotification({
+    orderId,
+    customerName: body.customerName,
+    customerEmail: body.customerEmail,
+    customerPhone: body.customerPhone,
+    deliveryMethod: body.deliveryMethod,
+    shippingAddress: body.shippingAddress,
+    total,
+    items: body.items.map((item) => {
+      const product = productMap.get(item.productId)!;
+      return { name: product.name, quantity: item.quantity, unitPrice: product.price };
+    }),
+    notes: body.notes,
+  });
 
   return NextResponse.json({ orderId });
 }
