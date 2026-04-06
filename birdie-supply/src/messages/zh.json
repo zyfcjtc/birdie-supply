@@ -58,6 +58,26 @@
     "pickup": "或自取时现金支付",
     "backHome": "返回首页"
   },
+  "footer": {
+    "privacy": "隐私政策"
+  },
+  "privacy": {
+    "title": "隐私政策",
+    "lastUpdated": "最后更新：2026年4月5日",
+    "intro": "Birdie Supply 在大多伦多地区（GTA）运营，致力于保护您的隐私。本政策说明我们如何收集、使用和保护您的个人信息。",
+    "collectTitle": "我们收集的信息",
+    "collectText": "当您下单时，我们会收集您的姓名、电子邮箱、电话号码和配送地址（如适用）。我们不收集支付卡信息——付款通过电子转账或现金完成。",
+    "useTitle": "信息使用方式",
+    "useText": "我们仅使用您的信息来处理和完成订单、就订单状态与您沟通，以及安排取货或配送时间。",
+    "sharingTitle": "信息共享",
+    "sharingText": "我们不会出售、交易或与第三方共享您的个人信息。您的信息仅在内部用于订单履行。",
+    "storageTitle": "数据存储",
+    "storageText": "您的订单信息使用行业标准加密安全存储。我们保留订单数据用于记账，并在收到请求后删除个人信息。",
+    "cookiesTitle": "Cookies",
+    "cookiesText": "我们仅使用必要的 Cookie 来维护您的购物车。我们不使用跟踪或广告 Cookie。",
+    "contactTitle": "联系方式",
+    "contactText": "如果您对本隐私政策有疑问或希望删除您的数据，请通过微信或邮箱 trtbirdies@gmail.com 联系我们。"
+  },
   "admin": {
     "login": {
       "title": "管理员登录",

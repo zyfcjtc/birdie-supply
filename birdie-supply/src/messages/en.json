@@ -58,6 +58,26 @@
     "pickup": "Or pay cash on pickup",
     "backHome": "Back to Home"
   },
+  "footer": {
+    "privacy": "Privacy Policy"
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "lastUpdated": "Last updated: April 5, 2026",
+    "intro": "Birdie Supply operates in the Greater Toronto Area (GTA) and is committed to protecting your privacy. This policy explains how we collect, use, and safeguard your personal information.",
+    "collectTitle": "Information We Collect",
+    "collectText": "When you place an order, we collect your name, email address, phone number, and delivery address (if applicable). We do not collect payment card information — payments are made via e-transfer or cash.",
+    "useTitle": "How We Use Your Information",
+    "useText": "We use your information solely to process and fulfill your orders, communicate with you about your order status, and arrange pickup or delivery times.",
+    "sharingTitle": "Information Sharing",
+    "sharingText": "We do not sell, trade, or share your personal information with third parties. Your information is only used internally for order fulfillment.",
+    "storageTitle": "Data Storage",
+    "storageText": "Your order information is stored securely using industry-standard encryption. We retain order data for bookkeeping purposes and delete personal information upon request.",
+    "cookiesTitle": "Cookies",
+    "cookiesText": "We use essential cookies only to maintain your shopping cart. We do not use tracking or advertising cookies.",
+    "contactTitle": "Contact",
+    "contactText": "If you have questions about this privacy policy or wish to request deletion of your data, please contact us via WeChat or email at trtbirdies@gmail.com."
+  },
   "admin": {
     "login": {
       "title": "Admin Login",

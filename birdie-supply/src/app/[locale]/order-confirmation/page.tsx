@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/routing";
 import { notFound } from "next/navigation";
@@ -32,7 +33,7 @@ export default async function OrderConfirmationPage({
           {t("confirmation.paymentInstructions")}
         </h2>
         <p className="text-sm text-gray-600 mb-2">
-          {t("confirmation.etransfer")} <strong>your-email@example.com</strong>
+          {t("confirmation.etransfer")} <strong>trtbirdies@gmail.com</strong>
         </p>
         <p className="text-sm text-gray-600 mb-4">
           {t("confirmation.pickup")}
@@ -42,6 +43,20 @@ export default async function OrderConfirmationPage({
             {t("checkout.total")}: ${total}
           </p>
         )}
+      </div>
+
+      {/* Contact Us */}
+      <div className="mt-6 bg-white rounded-lg p-6 shadow-sm max-w-sm mx-auto text-center">
+        <h2 className="font-semibold mb-3">{t("contact.title")}</h2>
+        <Image
+          src="/contact-wechat.jpg"
+          alt="WeChat QR Code"
+          width={180}
+          height={180}
+          className="mx-auto rounded-lg"
+        />
+        <p className="text-sm text-gray-600 mt-3">{t("contact.scanWechat")}</p>
+        <p className="text-xs text-gray-500 mt-1">{t("contact.arrangeTime")}</p>
       </div>
 
       <Link

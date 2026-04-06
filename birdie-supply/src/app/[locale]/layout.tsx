@@ -5,6 +5,7 @@ import { routing } from "@/i18n/routing";
 import { CartProvider } from "@/components/cart-provider";
 import { Header } from "@/components/header";
 import { CartBar } from "@/components/cart-bar";
+import { Footer } from "@/components/footer";
 import "@/app/globals.css";
 
 type Props = {
@@ -33,6 +34,7 @@ export default async function LocaleLayout({ children, params }: Props) {
           <CartProvider>
             <Header />
             <main className="max-w-lg mx-auto px-4 pb-20">{children}</main>
+            <Footer />
             <CartBar />
           </CartProvider>
         </NextIntlClientProvider>
