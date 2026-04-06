@@ -7,6 +7,7 @@ export type Product = {
   stock: number;
   category: "feather" | "nylon";
   active: boolean;
+  sort_order: number;
   created_at: string;
   updated_at: string;
 };

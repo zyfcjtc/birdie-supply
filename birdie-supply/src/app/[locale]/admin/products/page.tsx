@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { Product } from "@/lib/types";
 import { StockAdjuster } from "@/components/admin/stock-adjuster";
+import { SortOrderControl } from "@/components/admin/sort-order-control";
 import { ActiveToggle } from "./active-toggle";
 
 type Props = {
@@ -33,6 +34,16 @@ export default async function AdminProductsPage({ params }: Props) {
 
       {(!products || products.length === 0) && (
         <p className="text-center text-gray-500 py-8">{t("noProducts")}</p>
+      )}
+
+      {/* Column headers */}
+      {products && products.length > 0 && (
+        <div className="flex items-center gap-3 px-3 pb-1 text-xs text-gray-400">
+          <div className="flex-1" />
+          <span className="w-[88px] text-center">{t("stock")}</span>
+          <span className="w-[72px] text-center">{t("sortOrder")}</span>
+          <span className="w-10" />
+        </div>
       )}
 
       <div className="space-y-2">
@@ -72,6 +83,10 @@ export default async function AdminProductsPage({ params }: Props) {
                 <StockAdjuster
                   productId={product.id}
                   stock={product.stock}
+                />
+                <SortOrderControl
+                  productId={product.id}
+                  sortOrder={product.sort_order}
                 />
                 <ActiveToggle
                   productId={product.id}

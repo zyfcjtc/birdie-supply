@@ -19,6 +19,7 @@
       "nylon": "Nylon"
     },
     "sort": {
+      "recommended": "Recommended",
       "newest": "Newest",
       "oldest": "Oldest",
       "priceHigh": "Price: High to Low",
@@ -71,7 +72,7 @@
   "privacy": {
     "title": "Privacy Policy",
     "lastUpdated": "Last updated: April 5, 2026",
-    "intro": "Birdie Supply operates in the Greater Toronto Area (GTA) and is committed to protecting your privacy. This policy explains how we collect, use, and safeguard your personal information.",
+    "intro": "TRT Birdies operates in the Greater Toronto Area (GTA) and is committed to protecting your privacy. This policy explains how we collect, use, and safeguard your personal information.",
     "collectTitle": "Information We Collect",
     "collectText": "When you place an order, we collect your name, email address, phone number, and delivery address (if applicable). We do not collect payment card information — payments are made via e-transfer or cash.",
     "useTitle": "How We Use Your Information",
@@ -135,7 +136,10 @@
       "active": "Active",
       "save": "Save",
       "saving": "Saving...",
-      "noProducts": "No products yet"
+      "noProducts": "No products yet",
+      "sortOrder": "Recommended Order",
+      "moveUp": "Up",
+      "moveDown": "Down"
     }
   }
 }

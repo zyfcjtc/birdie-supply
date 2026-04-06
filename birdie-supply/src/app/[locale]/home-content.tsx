@@ -7,7 +7,7 @@ import { ProductCard } from "@/components/product-card";
 import { CategoryFilter } from "@/components/category-filter";
 import { useTranslations } from "next-intl";
 
-type SortOption = "newest" | "oldest" | "priceHigh" | "priceLow" | "popular";
+type SortOption = "recommended" | "newest" | "oldest" | "priceHigh" | "priceLow" | "popular";
 
 type Props = {
   products: Product[];
@@ -15,7 +15,7 @@ type Props = {
 
 export function HomeContent({ products }: Props) {
   const [category, setCategory] = useState("all");
-  const [sort, setSort] = useState<SortOption>("newest");
+  const [sort, setSort] = useState<SortOption>("recommended");
   const t = useTranslations();
 
   const sorted = useMemo(() => {
@@ -25,6 +25,13 @@ export function HomeContent({ products }: Props) {
         : products.filter((p) => p.category === category);
 
     switch (sort) {
+      case "recommended":
+        return filtered.sort((a, b) => {
+          if (a.sort_order === 0 && b.sort_order === 0) return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+          if (a.sort_order === 0) return 1;
+          if (b.sort_order === 0) return -1;
+          return a.sort_order - b.sort_order;
+        });
       case "newest":
         return filtered.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
       case "oldest":
@@ -40,7 +47,7 @@ export function HomeContent({ products }: Props) {
     }
   }, [products, category, sort]);
 
-  const sortOptions: SortOption[] = ["newest", "oldest", "priceLow", "priceHigh", "popular"];
+  const sortOptions: SortOption[] = ["recommended", "newest", "oldest", "priceLow", "priceHigh", "popular"];
 
   return (
     <div className="py-4">

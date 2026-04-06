@@ -19,6 +19,7 @@
       "nylon": "尼龙球"
     },
     "sort": {
+      "recommended": "推荐",
       "newest": "最新",
       "oldest": "最早",
       "priceHigh": "价格从高到低",
@@ -71,7 +72,7 @@
   "privacy": {
     "title": "隐私政策",
     "lastUpdated": "最后更新：2026年4月5日",
-    "intro": "Birdie Supply 在大多伦多地区（GTA）运营，致力于保护您的隐私。本政策说明我们如何收集、使用和保护您的个人信息。",
+    "intro": "TRT羽毛球补给站 在大多伦多地区（GTA）运营，致力于保护您的隐私。本政策说明我们如何收集、使用和保护您的个人信息。",
     "collectTitle": "我们收集的信息",
     "collectText": "当您下单时，我们会收集您的姓名、电子邮箱、电话号码和配送地址（如适用）。我们不收集支付卡信息——付款通过电子转账或现金完成。",
     "useTitle": "信息使用方式",
@@ -135,7 +136,10 @@
       "active": "上架",
       "save": "保存",
       "saving": "保存中...",
-      "noProducts": "暂无商品"
+      "noProducts": "暂无商品",
+      "sortOrder": "推荐排序",
+      "moveUp": "上移",
+      "moveDown": "下移"
     }
   }
 }
