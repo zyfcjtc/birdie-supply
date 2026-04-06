@@ -3,10 +3,49 @@ import { Product } from "@/lib/types";
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
 import { ProductDetail } from "./product-detail";
+import type { Metadata } from "next";
 
 type Props = {
   params: Promise<{ locale: string; id: string }>;
 };
+
+const SITE_URL = "https://birdie-supply.vercel.app";
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale, id } = await params;
+  const supabase = await createClient();
+  const { data: product } = await supabase
+    .from("products")
+    .select("*")
+    .eq("id", id)
+    .eq("active", true)
+    .single();
+
+  if (!product) return {};
+
+  const categoryLabel = locale === "zh"
+    ? (product.category === "feather" ? "鹅毛球" : "尼龙球")
+    : (product.category === "feather" ? "Feather Shuttlecock" : "Nylon Shuttlecock");
+
+  const title = locale === "zh"
+    ? `${product.name} - ${categoryLabel} | TRT Birdies`
+    : `${product.name} - ${categoryLabel} | TRT Birdies Toronto`;
+
+  const description = locale === "zh"
+    ? `${product.name} - $${product.price} CAD。大多伦多地区(GTA)免费配送。TRT Birdies 羽毛球专卖。`
+    : `Buy ${product.name} for $${product.price} CAD. Free delivery in Toronto GTA. ${categoryLabel} from TRT Birdies.`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `${SITE_URL}/${locale}/product/${id}`,
+      images: product.image_url ? [{ url: product.image_url, alt: product.name }] : undefined,
+    },
+  };
+}
 
 export default async function ProductPage({ params }: Props) {
   const { locale, id } = await params;
