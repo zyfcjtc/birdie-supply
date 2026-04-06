@@ -17,6 +17,13 @@
       "all": "All",
       "feather": "Feather",
       "nylon": "Nylon"
+    },
+    "sort": {
+      "newest": "Newest",
+      "oldest": "Oldest",
+      "priceHigh": "Price: High to Low",
+      "priceLow": "Price: Low to High",
+      "popular": "Popular"
     }
   },
   "cart": {

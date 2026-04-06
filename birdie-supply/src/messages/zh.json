@@ -17,6 +17,13 @@
       "all": "全部",
       "feather": "鹅毛球",
       "nylon": "尼龙球"
+    },
+    "sort": {
+      "newest": "最新",
+      "oldest": "最早",
+      "priceHigh": "价格从高到低",
+      "priceLow": "价格从低到高",
+      "popular": "热门"
     }
   },
   "cart": {
