@@ -7,6 +7,9 @@ import { Header } from "@/components/header";
 import { CartBar } from "@/components/cart-bar";
 import { Footer } from "@/components/footer";
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { ManifestSwitcher } from "@/components/manifest-switcher";
 import "@/app/globals.css";
 
 type Props = {
@@ -140,6 +143,9 @@ export default async function LocaleLayout({ children, params }: Props) {
             <CartBar />
           </CartProvider>
         </NextIntlClientProvider>
+        <ManifestSwitcher />
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
