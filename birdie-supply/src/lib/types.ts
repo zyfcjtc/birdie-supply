@@ -24,6 +24,7 @@ export type Order = {
   shipping_fee: number;
   total: number;
   notes: string | null;
+  admin_notes: string | null;
   created_at: string;
 };
 

@@ -3,6 +3,7 @@ import { setRequestLocale, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { OrderStatusBadge } from "@/components/admin/order-status-badge";
 import { OrderStatusActions } from "@/components/admin/order-status-actions";
+import { AdminNotes } from "@/components/admin/admin-notes";
 
 type Props = {
   params: Promise<{ locale: string; id: string }>;
@@ -104,6 +105,12 @@ export default async function AdminOrderDetailPage({ params }: Props) {
             <span>${order.total.toFixed(2)}</span>
           </div>
         </div>
+      </div>
+
+      {/* Admin Notes */}
+      <div className="bg-white rounded-lg p-4 shadow-sm mb-4">
+        <h2 className="text-sm font-semibold mb-2">Admin Notes</h2>
+        <AdminNotes orderId={order.id} notes={order.admin_notes} />
       </div>
 
       <p className="text-xs text-gray-400 text-center">

@@ -7,7 +7,8 @@ type Props = {
 
 export async function PATCH(request: NextRequest, { params }: Props) {
   const { id } = await params;
-  const { status } = await request.json();
+  const body = await request.json();
+  const { status, admin_notes } = body;
 
   const supabase = await createClient();
 
@@ -31,9 +32,17 @@ export async function PATCH(request: NextRequest, { params }: Props) {
 
   const oldStatus = order.status;
 
+  const updateData: Record<string, unknown> = {};
+  if (status !== undefined) updateData.status = status;
+  if (admin_notes !== undefined) updateData.admin_notes = admin_notes;
+
+  if (Object.keys(updateData).length === 0) {
+    return NextResponse.json({ success: true });
+  }
+
   const { error: updateError } = await supabase
     .from("orders")
-    .update({ status })
+    .update(updateData)
     .eq("id", id);
 
   if (updateError) {
@@ -43,7 +52,9 @@ export async function PATCH(request: NextRequest, { params }: Props) {
     );
   }
 
-  // Handle stock changes
+  // Handle stock changes only if status changed
+  if (!status) return NextResponse.json({ success: true });
+
   const { data: orderItems } = await supabase
     .from("order_items")
     .select("product_id, quantity")
