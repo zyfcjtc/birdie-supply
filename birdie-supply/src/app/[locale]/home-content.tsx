@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import Image from "next/image";
 import { Product } from "@/lib/types";
+import { compareByRecommended } from "@/lib/sort";
 import { ProductCard } from "@/components/product-card";
 import { CategoryFilter } from "@/components/category-filter";
+import { ContactCard } from "@/components/contact-card";
 import { useTranslations } from "next-intl";
 
 type SortOption = "recommended" | "newest" | "oldest" | "priceHigh" | "priceLow" | "popular";
@@ -26,12 +27,7 @@ export function HomeContent({ products }: Props) {
 
     switch (sort) {
       case "recommended":
-        return filtered.sort((a, b) => {
-          if (a.sort_order === 0 && b.sort_order === 0) return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-          if (a.sort_order === 0) return 1;
-          if (b.sort_order === 0) return -1;
-          return a.sort_order - b.sort_order;
-        });
+        return filtered.sort(compareByRecommended);
       case "newest":
         return filtered.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
       case "oldest":
@@ -41,7 +37,7 @@ export function HomeContent({ products }: Props) {
       case "priceLow":
         return filtered.sort((a, b) => a.price - b.price);
       case "popular":
-        return filtered.sort((a, b) => a.stock - b.stock);
+        return filtered.sort((a, b) => b.stock - a.stock);
       default:
         return filtered;
     }
@@ -77,17 +73,8 @@ export function HomeContent({ products }: Props) {
         </div>
       )}
 
-      {/* Contact Us */}
-      <div className="mt-8 bg-white rounded-lg p-6 shadow-sm text-center">
-        <h2 className="text-lg font-bold mb-3">{t("contact.title")}</h2>
-        <Image
-          src="/contact-wechat.jpg"
-          alt="WeChat QR Code"
-          width={200}
-          height={200}
-          className="mx-auto rounded-lg"
-        />
-        <p className="text-sm text-gray-600 mt-3">{t("contact.scanWechat")}</p>
+      <div className="mt-8">
+        <ContactCard />
       </div>
     </div>
   );

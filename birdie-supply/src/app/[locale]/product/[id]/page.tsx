@@ -1,5 +1,7 @@
+import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { Product } from "@/lib/types";
+import { SITE_URL } from "@/lib/constants";
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
 import { ProductDetail } from "./product-detail";
@@ -9,17 +11,21 @@ type Props = {
   params: Promise<{ locale: string; id: string }>;
 };
 
-const SITE_URL = "https://birdie-supply.vercel.app";
-
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { locale, id } = await params;
+// Cached per-request so generateMetadata and the page share one DB query
+const getProduct = cache(async (id: string) => {
   const supabase = await createClient();
-  const { data: product } = await supabase
+  const { data } = await supabase
     .from("products")
     .select("*")
     .eq("id", id)
     .eq("active", true)
     .single();
+  return data as Product | null;
+});
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale, id } = await params;
+  const product = await getProduct(id);
 
   if (!product) return {};
 
@@ -51,15 +57,8 @@ export default async function ProductPage({ params }: Props) {
   const { locale, id } = await params;
   setRequestLocale(locale);
 
-  const supabase = await createClient();
-  const { data: product } = await supabase
-    .from("products")
-    .select("*")
-    .eq("id", id)
-    .eq("active", true)
-    .single();
-
+  const product = await getProduct(id);
   if (!product) notFound();
 
-  return <ProductDetail product={product as Product} />;
+  return <ProductDetail product={product} />;
 }

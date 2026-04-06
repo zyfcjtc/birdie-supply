@@ -9,14 +9,13 @@ import { Footer } from "@/components/footer";
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { SITE_URL } from "@/lib/constants";
 import "@/app/globals.css";
 
 type Props = {
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
 };
-
-const SITE_URL = "https://birdie-supply.vercel.app";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -95,7 +94,6 @@ export default async function LocaleLayout({ children, params }: Props) {
     name: "TRT Birdies",
     description: "Badminton shuttlecocks shop in Toronto GTA. Feather and nylon shuttlecocks with free delivery.",
     url: SITE_URL,
-    telephone: "",
     email: "trtbirdies@gmail.com",
     areaServed: {
       "@type": "GeoCircle",

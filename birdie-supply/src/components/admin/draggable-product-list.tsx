@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback } from "react";
 import { Product } from "@/lib/types";
+import { compareByRecommended } from "@/lib/sort";
 import { StockAdjuster } from "./stock-adjuster";
 import { ActiveToggle } from "@/app/[locale]/admin/products/active-toggle";
 
@@ -16,24 +17,16 @@ type Props = {
 
 export function DraggableProductList({ products, locale, labels }: Props) {
   const [items, setItems] = useState(() =>
-    [...products].sort((a, b) => {
-      if (a.sort_order === 0 && b.sort_order === 0)
-        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-      if (a.sort_order === 0) return 1;
-      if (b.sort_order === 0) return -1;
-      return a.sort_order - b.sort_order;
-    })
+    [...products].sort(compareByRecommended)
   );
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [overIndex, setOverIndex] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
 
-  // Touch drag state
   const touchDragIndex = useRef<number | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  // --- Save order ---
   const saveOrder = useCallback(async (newItems: Product[]) => {
     setSaving(true);
     await Promise.all(
@@ -49,7 +42,6 @@ export function DraggableProductList({ products, locale, labels }: Props) {
     setSaving(false);
   }, []);
 
-  // --- Reorder ---
   function reorder(fromIndex: number, toIndex: number) {
     if (fromIndex === toIndex) return null;
     const newItems = [...items];
@@ -59,7 +51,6 @@ export function DraggableProductList({ products, locale, labels }: Props) {
     return newItems;
   }
 
-  // --- Desktop drag handlers ---
   function handleDragStart(e: React.DragEvent, index: number) {
     setDragIndex(index);
     e.dataTransfer.effectAllowed = "move";
@@ -89,7 +80,6 @@ export function DraggableProductList({ products, locale, labels }: Props) {
     if (newItems) await saveOrder(newItems);
   }
 
-  // --- Touch handlers ---
   function getIndexFromTouch(touch: React.Touch | Touch): number | null {
     for (let i = 0; i < itemRefs.current.length; i++) {
       const el = itemRefs.current[i];
@@ -164,7 +154,6 @@ export function DraggableProductList({ products, locale, labels }: Props) {
             }`}
           >
             <div className="flex gap-3 items-center">
-              {/* Drag handle */}
               <div
                 className="w-6 flex-shrink-0 text-gray-400 select-none text-center text-lg cursor-grab active:cursor-grabbing touch-none"
                 onTouchStart={() => handleTouchStart(index)}

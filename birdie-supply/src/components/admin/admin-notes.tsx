@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 type Props = {
@@ -12,9 +12,15 @@ export function AdminNotes({ orderId, notes }: Props) {
   const [value, setValue] = useState(notes ?? "");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout>>(null);
   const router = useRouter();
 
+  useEffect(() => {
+    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
+  }, []);
+
   async function handleSave() {
+    if (value === (notes ?? "")) return;
     setSaving(true);
     await fetch(`/api/admin/orders/${orderId}`, {
       method: "PATCH",
@@ -23,7 +29,8 @@ export function AdminNotes({ orderId, notes }: Props) {
     });
     setSaving(false);
     setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => setSaved(false), 2000);
     router.refresh();
   }
 

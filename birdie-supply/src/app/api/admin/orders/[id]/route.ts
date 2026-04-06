@@ -52,8 +52,7 @@ export async function PATCH(request: NextRequest, { params }: Props) {
     );
   }
 
-  // Handle stock changes only if status changed
-  if (!status) return NextResponse.json({ success: true });
+  if (status === undefined) return NextResponse.json({ success: true });
 
   const { data: orderItems } = await supabase
     .from("order_items")
@@ -61,20 +60,18 @@ export async function PATCH(request: NextRequest, { params }: Props) {
     .eq("order_id", id);
 
   if (orderItems) {
-    if (status === "confirmed" && oldStatus === "pending") {
-      for (const item of orderItems) {
-        await supabase.rpc("decrement_stock", {
-          p_id: item.product_id,
-          amount: item.quantity,
-        });
-      }
-    } else if (status === "cancelled" && oldStatus === "confirmed") {
-      for (const item of orderItems) {
-        await supabase.rpc("increment_stock", {
-          p_id: item.product_id,
-          amount: item.quantity,
-        });
-      }
+    const rpcName = status === "confirmed" && oldStatus === "pending"
+      ? "decrement_stock"
+      : status === "cancelled" && oldStatus === "confirmed"
+      ? "increment_stock"
+      : null;
+
+    if (rpcName) {
+      await Promise.all(
+        orderItems.map((item) =>
+          supabase.rpc(rpcName, { p_id: item.product_id, amount: item.quantity })
+        )
+      );
     }
   }
 
