@@ -9,7 +9,6 @@ import { Footer } from "@/components/footer";
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { ManifestSwitcher } from "@/components/manifest-switcher";
 import "@/app/globals.css";
 
 type Props = {
@@ -127,7 +126,6 @@ export default async function LocaleLayout({ children, params }: Props) {
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" href="/icon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#059669" />
         <script
           type="application/ld+json"
@@ -143,7 +141,6 @@ export default async function LocaleLayout({ children, params }: Props) {
             <CartBar />
           </CartProvider>
         </NextIntlClientProvider>
-        <ManifestSwitcher />
         <Analytics />
         <SpeedInsights />
       </body>
