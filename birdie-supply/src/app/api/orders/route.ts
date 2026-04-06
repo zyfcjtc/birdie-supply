@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
+import { randomUUID } from "crypto";
 
 const SHIPPING_FEE = 5.0;
 
@@ -82,9 +83,12 @@ export async function POST(request: NextRequest) {
   const shippingFee = body.deliveryMethod === "shipping" ? SHIPPING_FEE : 0;
   const total = subtotal + shippingFee;
 
-  const { data: order, error: orderError } = await supabase
+  const orderId = randomUUID();
+
+  const { error: orderError } = await supabase
     .from("orders")
     .insert({
+      id: orderId,
       customer_name: body.customerName,
       customer_email: body.customerEmail,
       customer_phone: body.customerPhone,
@@ -95,11 +99,9 @@ export async function POST(request: NextRequest) {
       shipping_fee: shippingFee,
       total,
       notes: body.notes || null,
-    })
-    .select("id")
-    .single();
+    });
 
-  if (orderError || !order) {
+  if (orderError) {
     return NextResponse.json(
       { error: "Failed to create order" },
       { status: 500 }
@@ -107,7 +109,7 @@ export async function POST(request: NextRequest) {
   }
 
   const orderItems = body.items.map((item) => ({
-    order_id: order.id,
+    order_id: orderId,
     product_id: item.productId,
     quantity: item.quantity,
     unit_price: productMap.get(item.productId)!.price,
@@ -124,5 +126,5 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  return NextResponse.json({ orderId: order.id });
+  return NextResponse.json({ orderId });
 }
