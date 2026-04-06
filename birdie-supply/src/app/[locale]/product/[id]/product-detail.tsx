@@ -52,13 +52,13 @@ export function ProductDetail({ product }: Props) {
 
       {inStock ? (
         <p className="text-sm text-emerald-600 mt-1">
-          ✓ {t("product.inStock")} ({product.stock} {t("product.tubes")})
+          ✓ {t("product.inStock")}
         </p>
       ) : (
         <p className="text-sm text-red-500 mt-1">{t("product.outOfStock")}</p>
       )}
 
-      <p className="text-sm text-gray-600 mt-4 leading-relaxed">
+      <p className="text-sm text-gray-600 mt-4 leading-relaxed whitespace-pre-wrap">
         {product.description}
       </p>
 
