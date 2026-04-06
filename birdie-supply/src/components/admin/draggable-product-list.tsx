@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import { Product } from "@/lib/types";
 import { StockAdjuster } from "./stock-adjuster";
 import { ActiveToggle } from "@/app/[locale]/admin/products/active-toggle";
@@ -27,20 +27,48 @@ export function DraggableProductList({ products, locale, labels }: Props) {
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [overIndex, setOverIndex] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
-  const dragNode = useRef<HTMLDivElement | null>(null);
 
-  function handleDragStart(e: React.DragEvent, index: number) {
-    setDragIndex(index);
-    dragNode.current = e.currentTarget as HTMLDivElement;
-    e.dataTransfer.effectAllowed = "move";
-    // Make the drag image slightly transparent
-    setTimeout(() => {
-      if (dragNode.current) dragNode.current.style.opacity = "0.4";
-    }, 0);
+  // Touch drag state
+  const touchDragIndex = useRef<number | null>(null);
+  const listRef = useRef<HTMLDivElement>(null);
+  const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  // --- Save order ---
+  const saveOrder = useCallback(async (newItems: Product[]) => {
+    setSaving(true);
+    await Promise.all(
+      newItems.map((item, i) =>
+        fetch(`/api/admin/products/${item.id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ sort_order: i + 1 }),
+        })
+      )
+    );
+    setItems(newItems.map((item, i) => ({ ...item, sort_order: i + 1 })));
+    setSaving(false);
+  }, []);
+
+  // --- Reorder ---
+  function reorder(fromIndex: number, toIndex: number) {
+    if (fromIndex === toIndex) return null;
+    const newItems = [...items];
+    const [moved] = newItems.splice(fromIndex, 1);
+    newItems.splice(toIndex, 0, moved);
+    setItems(newItems);
+    return newItems;
   }
 
-  function handleDragEnd() {
-    if (dragNode.current) dragNode.current.style.opacity = "1";
+  // --- Desktop drag handlers ---
+  function handleDragStart(e: React.DragEvent, index: number) {
+    setDragIndex(index);
+    e.dataTransfer.effectAllowed = "move";
+    const el = e.currentTarget as HTMLDivElement;
+    setTimeout(() => { el.style.opacity = "0.4"; }, 0);
+  }
+
+  function handleDragEnd(e: React.DragEvent) {
+    (e.currentTarget as HTMLDivElement).style.opacity = "1";
     setDragIndex(null);
     setOverIndex(null);
   }
@@ -53,39 +81,49 @@ export function DraggableProductList({ products, locale, labels }: Props) {
 
   async function handleDrop(e: React.DragEvent, dropIndex: number) {
     e.preventDefault();
-    if (dragIndex === null || dragIndex === dropIndex) {
-      handleDragEnd();
-      return;
+    if (dragIndex === null) return;
+    const newItems = reorder(dragIndex, dropIndex);
+    setDragIndex(null);
+    setOverIndex(null);
+    (e.currentTarget as HTMLDivElement).style.opacity = "1";
+    if (newItems) await saveOrder(newItems);
+  }
+
+  // --- Touch handlers ---
+  function getIndexFromTouch(touch: React.Touch | Touch): number | null {
+    for (let i = 0; i < itemRefs.current.length; i++) {
+      const el = itemRefs.current[i];
+      if (!el) continue;
+      const rect = el.getBoundingClientRect();
+      if (touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+        return i;
+      }
     }
+    return null;
+  }
 
-    const newItems = [...items];
-    const [moved] = newItems.splice(dragIndex, 1);
-    newItems.splice(dropIndex, 0, moved);
-    setItems(newItems);
-    handleDragEnd();
+  function handleTouchStart(index: number) {
+    touchDragIndex.current = index;
+    setDragIndex(index);
+  }
 
-    // Save new order — assign sort_order 1, 2, 3... based on position
-    setSaving(true);
-    const updates = newItems.map((item, i) => ({
-      id: item.id,
-      sort_order: i + 1,
-    }));
+  function handleTouchMove(e: React.TouchEvent) {
+    if (touchDragIndex.current === null) return;
+    e.preventDefault();
+    const touch = e.touches[0];
+    const idx = getIndexFromTouch(touch);
+    if (idx !== null) setOverIndex(idx);
+  }
 
-    await Promise.all(
-      updates.map((u) =>
-        fetch(`/api/admin/products/${u.id}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ sort_order: u.sort_order }),
-        })
-      )
-    );
-
-    // Update local state with new sort_order values
-    setItems((prev) =>
-      prev.map((item, i) => ({ ...item, sort_order: i + 1 }))
-    );
-    setSaving(false);
+  async function handleTouchEnd() {
+    const from = touchDragIndex.current;
+    const to = overIndex;
+    touchDragIndex.current = null;
+    setDragIndex(null);
+    setOverIndex(null);
+    if (from === null || to === null) return;
+    const newItems = reorder(from, to);
+    if (newItems) await saveOrder(newItems);
   }
 
   return (
@@ -103,17 +141,22 @@ export function DraggableProductList({ products, locale, labels }: Props) {
         <div className="text-xs text-amber-600 text-center py-1">Saving order...</div>
       )}
 
-      <div className="space-y-2">
+      <div ref={listRef} className="space-y-2">
         {items.map((product, index) => (
           <div
             key={product.id}
+            ref={(el) => { itemRefs.current[index] = el; }}
             draggable
             onDragStart={(e) => handleDragStart(e, index)}
             onDragEnd={handleDragEnd}
             onDragOver={(e) => handleDragOver(e, index)}
             onDrop={(e) => handleDrop(e, index)}
-            className={`bg-white rounded-lg p-3 shadow-sm transition-all cursor-grab active:cursor-grabbing ${
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            className={`bg-white rounded-lg p-3 shadow-sm transition-all select-none ${
               !product.active ? "opacity-50" : ""
+            } ${
+              dragIndex === index ? "opacity-40" : ""
             } ${
               overIndex === index && dragIndex !== null && dragIndex !== index
                 ? "border-2 border-amber-400"
@@ -122,7 +165,10 @@ export function DraggableProductList({ products, locale, labels }: Props) {
           >
             <div className="flex gap-3 items-center">
               {/* Drag handle */}
-              <div className="w-6 flex-shrink-0 text-gray-300 select-none text-center">
+              <div
+                className="w-6 flex-shrink-0 text-gray-400 select-none text-center text-lg cursor-grab active:cursor-grabbing touch-none"
+                onTouchStart={() => handleTouchStart(index)}
+              >
                 ⠿
               </div>
               <div className="w-12 h-12 bg-gray-100 rounded flex-shrink-0 overflow-hidden">
@@ -130,7 +176,7 @@ export function DraggableProductList({ products, locale, labels }: Props) {
                   <img
                     src={product.image_url}
                     alt={product.name}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover pointer-events-none"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
