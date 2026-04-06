@@ -10,7 +10,7 @@ export function Footer() {
         {t("footer.privacy")}
       </Link>
       <span className="mx-2">·</span>
-      <span>&copy; {new Date().getFullYear()} Birdie Supply</span>
+      <span>&copy; {new Date().getFullYear()} TRT Birdies</span>
     </footer>
   );
 }
