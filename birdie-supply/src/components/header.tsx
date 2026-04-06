@@ -11,13 +11,17 @@ export function Header() {
       <div className="max-w-lg mx-auto px-4 py-2 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
           <Image
-            src="/logo.svg"
+            src="/logo-icon.png"
             alt={t("site.name")}
-            width={160}
+            width={40}
             height={40}
             className="h-10 w-auto"
             priority
           />
+          <div className="flex flex-col">
+            <span className="text-lg font-bold text-gray-900">{t("site.name")}</span>
+            <span className="text-xs text-gray-500">{t("site.tagline")}</span>
+          </div>
         </Link>
         <div className="flex items-center gap-3">
           <LanguageToggle />
