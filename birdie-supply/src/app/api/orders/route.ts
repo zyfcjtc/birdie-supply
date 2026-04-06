@@ -2,8 +2,6 @@ import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 
-const SHIPPING_FEE = 5.0;
-
 type OrderItemInput = {
   productId: string;
   quantity: number;
@@ -13,7 +11,7 @@ type OrderInput = {
   customerName: string;
   customerEmail: string;
   customerPhone: string;
-  deliveryMethod: "pickup" | "shipping";
+  deliveryMethod: "pickup" | "delivery";
   shippingAddress?: string;
   notes?: string;
   items: OrderItemInput[];
@@ -34,9 +32,9 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  if (body.deliveryMethod === "shipping" && !body.shippingAddress) {
+  if (body.deliveryMethod === "delivery" && !body.shippingAddress) {
     return NextResponse.json(
-      { error: "Shipping address required" },
+      { error: "Delivery address required" },
       { status: 400 }
     );
   }
@@ -80,8 +78,7 @@ export async function POST(request: NextRequest) {
     return sum + product.price * item.quantity;
   }, 0);
 
-  const shippingFee = body.deliveryMethod === "shipping" ? SHIPPING_FEE : 0;
-  const total = subtotal + shippingFee;
+  const total = subtotal;
 
   const orderId = randomUUID();
 
@@ -96,7 +93,7 @@ export async function POST(request: NextRequest) {
       shipping_address: body.shippingAddress || null,
       status: "pending",
       subtotal,
-      shipping_fee: shippingFee,
+      shipping_fee: 0,
       total,
       notes: body.notes || null,
     });

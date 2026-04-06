@@ -4,12 +4,11 @@ import { useState, useEffect, type FormEvent } from "react";
 import { useCart } from "@/components/cart-provider";
 import { createClient } from "@/lib/supabase/client";
 import { Product } from "@/lib/types";
-import { DeliveryToggle } from "@/components/delivery-toggle";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/routing";
 import { useLocale } from "next-intl";
 
-const SHIPPING_FEE = 5.0;
+const FREE_DELIVERY_MIN = 10;
 
 export default function CheckoutPage() {
   const { items, clear } = useCart();
@@ -17,7 +16,7 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const [delivery, setDelivery] = useState<"pickup" | "shipping">("pickup");
+  const [delivery, setDelivery] = useState<"pickup" | "delivery">("pickup");
   const t = useTranslations();
   const router = useRouter();
   const locale = useLocale();
@@ -50,13 +49,15 @@ export default function CheckoutPage() {
     return <div className="py-12 text-center text-gray-500">...</div>;
   }
 
+  const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
+  const qualifiesForDelivery = totalQuantity >= FREE_DELIVERY_MIN;
+
   const subtotal = items.reduce((sum, item) => {
     const product = products[item.productId];
     return sum + (product ? product.price * item.quantity : 0);
   }, 0);
 
-  const shippingFee = delivery === "shipping" ? SHIPPING_FEE : 0;
-  const total = subtotal + shippingFee;
+  const total = subtotal;
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -75,7 +76,7 @@ export default function CheckoutPage() {
           customerPhone: form.get("phone"),
           deliveryMethod: delivery,
           shippingAddress:
-            delivery === "shipping" ? form.get("address") : undefined,
+            delivery === "delivery" ? form.get("address") : undefined,
           notes: form.get("notes") || undefined,
           items: items.map((i) => ({
             productId: i.productId,
@@ -121,12 +122,6 @@ export default function CheckoutPage() {
             </div>
           );
         })}
-        <div className="border-t mt-2 pt-2 flex justify-between text-sm">
-          <span>{t("checkout.shippingFee")}</span>
-          <span>
-            {shippingFee === 0 ? t("checkout.free") : `$${shippingFee.toFixed(2)}`}
-          </span>
-        </div>
         <div className="border-t mt-2 pt-2 flex justify-between font-bold">
           <span>{t("checkout.total")}</span>
           <span>${total.toFixed(2)}</span>
@@ -168,12 +163,50 @@ export default function CheckoutPage() {
           <label className="block text-sm font-semibold mb-2">
             {t("checkout.delivery")}
           </label>
-          <DeliveryToggle value={delivery} onChange={setDelivery} />
-          {delivery === "shipping" && (
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={() => setDelivery("pickup")}
+              className={`flex-1 p-3 rounded-lg text-center text-sm font-medium border-2 transition-colors ${
+                delivery === "pickup"
+                  ? "border-emerald-600 bg-emerald-50 text-emerald-700"
+                  : "border-gray-200 text-gray-600 hover:bg-gray-50"
+              }`}
+            >
+              🏠 {t("checkout.pickup")}
+              <br />
+              <span className="font-normal text-xs text-gray-500">
+                {t("checkout.pickupDesc")}
+              </span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                if (qualifiesForDelivery) setDelivery("delivery");
+              }}
+              disabled={!qualifiesForDelivery}
+              className={`flex-1 p-3 rounded-lg text-center text-sm font-medium border-2 transition-colors ${
+                delivery === "delivery"
+                  ? "border-emerald-600 bg-emerald-50 text-emerald-700"
+                  : !qualifiesForDelivery
+                  ? "border-gray-200 text-gray-300 cursor-not-allowed"
+                  : "border-gray-200 text-gray-600 hover:bg-gray-50"
+              }`}
+            >
+              🚗 {t("checkout.freeDelivery")}
+              <br />
+              <span className="font-normal text-xs text-gray-500">
+                {qualifiesForDelivery
+                  ? t("checkout.freeDeliveryDesc")
+                  : t("checkout.freeDeliveryMin", { min: FREE_DELIVERY_MIN })}
+              </span>
+            </button>
+          </div>
+          {delivery === "delivery" && (
             <textarea
               name="address"
               required
-              placeholder={t("checkout.shippingAddress")}
+              placeholder={t("checkout.deliveryAddress")}
               rows={2}
               className="w-full mt-2 px-3 py-2.5 border border-gray-300 rounded-lg text-sm"
             />

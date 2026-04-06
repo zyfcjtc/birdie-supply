@@ -36,15 +36,14 @@
     "phone": "电话",
     "delivery": "配送方式",
     "pickup": "自取",
-    "pickupDesc": "免费",
-    "shipping": "配送",
-    "shippingDesc": "GTA地区统一$5",
-    "shippingAddress": "配送地址",
+    "pickupDesc": "随时可取",
+    "freeDelivery": "免费送货",
+    "freeDeliveryDesc": "GTA地区免费配送",
+    "freeDeliveryMin": "满{min}筒起送",
+    "deliveryAddress": "配送地址（GTA地区）",
     "notes": "备注（选填）",
     "placeOrder": "提交订单",
-    "shippingFee": "运费",
-    "total": "合计",
-    "free": "免费"
+    "total": "合计"
   },
   "confirmation": {
     "title": "订单已提交！",

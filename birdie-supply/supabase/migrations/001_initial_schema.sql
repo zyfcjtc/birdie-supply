@@ -31,7 +31,7 @@ create table orders (
   customer_name text not null,
   customer_email text not null,
   customer_phone text not null,
-  delivery_method text not null check (delivery_method in ('pickup', 'shipping')),
+  delivery_method text not null check (delivery_method in ('pickup', 'delivery')),
   shipping_address text,
   status text not null default 'pending' check (status in ('pending', 'confirmed', 'completed', 'cancelled')),
   subtotal decimal(10, 2) not null,

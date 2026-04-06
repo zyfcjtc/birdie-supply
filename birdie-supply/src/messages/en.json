@@ -36,15 +36,14 @@
     "phone": "Phone",
     "delivery": "Delivery",
     "pickup": "Pickup",
-    "pickupDesc": "Free",
-    "shipping": "Shipping",
-    "shippingDesc": "$5 flat rate (GTA)",
-    "shippingAddress": "Shipping Address",
+    "pickupDesc": "Always available",
+    "freeDelivery": "Free Delivery",
+    "freeDeliveryDesc": "Free to GTA area",
+    "freeDeliveryMin": "Min {min} tubes",
+    "deliveryAddress": "Delivery Address (GTA)",
     "notes": "Order Notes (optional)",
     "placeOrder": "Place Order",
-    "shippingFee": "Shipping",
-    "total": "Total",
-    "free": "Free"
+    "total": "Total"
   },
   "confirmation": {
     "title": "Order Placed!",
