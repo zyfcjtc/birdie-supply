@@ -60,5 +60,31 @@ export default async function ProductPage({ params }: Props) {
   const product = await getProduct(id);
   if (!product) notFound();
 
-  return <ProductDetail product={product} />;
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: product.description,
+    ...(product.image_url && { image: product.image_url }),
+    category: product.category === "feather" ? "Feather Shuttlecock" : "Nylon Shuttlecock",
+    offers: {
+      "@type": "Offer",
+      price: product.price,
+      priceCurrency: "CAD",
+      availability: product.stock > 0
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
+      url: `${SITE_URL}/${locale}/product/${id}`,
+    },
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <ProductDetail product={product} />
+    </>
+  );
 }
